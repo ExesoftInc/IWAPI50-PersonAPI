@@ -3,13 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
-using AutoMapper;
 using NLog;
 using System.IO;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+
 using PersonAPI.Entities;
 using PersonAPI.Services;
 using Microsoft.Extensions.Hosting;
@@ -68,10 +67,12 @@ namespace PersonAPI
 
 			services.AddDbContext<EntitiesContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("EntitiesConnection")
-            ));
-			services.AddAutoMapper(typeof(EntitiesContext).Assembly);
+            ));			
 			services.ConfigureServices();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<UnhandledExceptionFilterAttribute>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
